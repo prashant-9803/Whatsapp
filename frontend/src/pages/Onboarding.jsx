@@ -27,13 +27,10 @@ const Onboarding = () => {
           image,
         });
 
-        console.log("Data:", data);
-
         if (data.success) {
-          const { email, name, profilePicture, about } = data.user;
-          console.log("email", email, "name", name, "profilePicture", profilePicture, "about", about);
+          const { _id, email, name, profilePicture, about } = data.user;
           const token = data.token;
-          const obj = { email, name, token, profilePicture, about };
+          const obj = { _id, email, name, token, profilePicture, about };
           localStorage.setItem("user", JSON.stringify(obj));
           dispatch(setUser(obj));
           navigate("/");

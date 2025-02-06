@@ -10,7 +10,6 @@ import { current } from "@reduxjs/toolkit";
 const ChatHeader = () => {
 
   const {currentChatUser} = useSelector(state => state.ui) 
-  console.log("currentChatUser", currentChatUser);
 
   return (
     <div className="h-16 px-4 py-3 flex justify-between items-center bg-panel-header-background z-10">

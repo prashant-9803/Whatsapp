@@ -17,10 +17,10 @@ const Login = () => {
     try {
       if (authResult?.code) {
         const result = await googleAuth(authResult.code);
-        const { email, name, profilePicture } = result.data.user;
+        const { _id, email, name, profilePicture } = result.data.user;
         const isNewUser = result.data.isNewUser
         const token = result.data.token;
-        const obj = { email, name, token, profilePicture };
+        const obj = { _id, email, name, token, profilePicture };
         localStorage.setItem("user", JSON.stringify(obj));
         dispatch(setUser(obj));
 
