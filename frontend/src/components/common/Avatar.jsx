@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaCamera } from "react-icons/fa";
 import ContextMenu from "./ContextMenu";
 import PhotoPicker from "./PhotoPicker";
+import PhotoLibrary from "./PhotoLibrary";
 
 const Avatar = ({ type, image, setImage }) => {
   const [hover, setHover] = useState(false);
@@ -12,6 +13,7 @@ const Avatar = ({ type, image, setImage }) => {
     y: 0,
   });
   const [grabPhoto, setGrabPhoto] = useState(false);
+  const [showPhotoLibrary, setShowPhotoLibrary] = useState(false);
 
   useEffect(() => {
     if (hover) {
@@ -28,7 +30,7 @@ const Avatar = ({ type, image, setImage }) => {
       data.click();
       document.body.onfocus = (e) => {
         setTimeout(() => {
-            setGrabPhoto(false);
+          setGrabPhoto(false);
         }, 1000);
       };
     }
@@ -51,7 +53,12 @@ const Avatar = ({ type, image, setImage }) => {
       },
     },
     { name: "Take Photo", callback: () => {} },
-    { name: "Choose From Library", callback: () => {} },
+    {
+      name: "Choose From Library",
+      callback: () => {
+        setShowPhotoLibrary(true);
+      },
+    },
     {
       name: "Remove Photo",
       callback: () => {
@@ -68,7 +75,7 @@ const Avatar = ({ type, image, setImage }) => {
       data.src = e.target.result;
       data.setAttribute("data-src", e.target.result);
     };
-    
+
     reader.readAsDataURL(file);
     setTimeout(() => {
       setImage(data.src);
@@ -128,6 +135,12 @@ const Avatar = ({ type, image, setImage }) => {
         />
       )}
 
+      {showPhotoLibrary && (
+        <PhotoLibrary
+          setImage={setImage}
+          hidePhotoLibrary={setShowPhotoLibrary}
+        />
+      )}
       {grabPhoto && <PhotoPicker onChange={photoPickerChange} />}
     </>
   );
