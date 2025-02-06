@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    contactsPage: false
+    contactsPage: false,
+    currentChatUser: undefined
 }
 
 const uiSlice = createSlice({
@@ -11,8 +12,11 @@ const uiSlice = createSlice({
         setContactsPage: (state, action) => {
             state.contactsPage = action.payload
         },
+        setCurrentChatUser: (state, action) => {
+            state.currentChatUser = action.payload
+        },
     },
 })
 
-export const { setContactsPage } = uiSlice.actions;
+export const { setContactsPage, setCurrentChatUser } = uiSlice.actions;
 export default uiSlice.reducer 

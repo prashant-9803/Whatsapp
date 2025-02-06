@@ -1,10 +1,25 @@
 import React from "react";
 import Avatar from "../common/Avatar";
+import { useDispatch, useSelector } from "react-redux";
+import { setContactsPage, setCurrentChatUser } from "../../slices/uiSlice";
 
 const ChatListItem = ({ data, isContactsPage = false }) => {
+
+  const dispatch = useDispatch();
+  const {user} = useSelector(state => state.auth)
+  const { currentChatUser } = useSelector(state => state.ui)
+
+  const handleContactClick = () => {
+    // if(currentChatUser?._id == data?.id) {
+      dispatch(setCurrentChatUser(data))
+      dispatch(setContactsPage(false))
+    // }
+  }
+
   return (
     <div
       className={`flex cursor-pointer items-center hover:bg-background-default-hover`}
+      onClick={handleContactClick}
     >
       <div className="min-w-fit px-5 pt-3 pb-1">
         <Avatar type="lg" image={data?.profilePicture} />
