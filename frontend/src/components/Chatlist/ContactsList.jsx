@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { setContactsPage } from "../../slices/uiSlice";
 import { BiSearchAlt2 } from "react-icons/bi";
 import axios from "axios";
+import ChatListItem from "./ChatListItem";
 
 const ContactsList = () => {
   const dispatch = useDispatch();
@@ -21,7 +22,7 @@ const ContactsList = () => {
       } catch (error) {
         console.log(error);
       }
-    }
+    };
     getContacts();
   }, []);
 
@@ -55,15 +56,22 @@ const ContactsList = () => {
           </div>
         </div>
 
-        {
-          Object.entries(allContacts).map(([initialLetter, userList]) => {
-            return (
-              <div key={Date.now()+initialLetter}>
-                  <div className="text-teal-light pl-10 py-5">{initialLetter}</div>
-              </div>
-            )
-          })
-        }
+        {Object.entries(allContacts).map(([initialLetter, userList]) => {
+          return (
+            <div key={Date.now() + initialLetter}>
+              <div className="text-teal-light pl-10 py-5">{initialLetter}</div>
+              {userList.map((contact) => {
+                return (
+                  <ChatListItem
+                    data={contact}
+                    isContactsPage={true}
+                    key={contact._id}
+                  />
+                );
+              })}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
