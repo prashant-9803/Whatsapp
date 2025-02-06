@@ -3,6 +3,7 @@ import { FaCamera } from "react-icons/fa";
 import ContextMenu from "./ContextMenu";
 import PhotoPicker from "./PhotoPicker";
 import PhotoLibrary from "./PhotoLibrary";
+import CapturePhoto from "./CapturePhoto";
 
 const Avatar = ({ type, image, setImage }) => {
   const [hover, setHover] = useState(false);
@@ -14,6 +15,7 @@ const Avatar = ({ type, image, setImage }) => {
   });
   const [grabPhoto, setGrabPhoto] = useState(false);
   const [showPhotoLibrary, setShowPhotoLibrary] = useState(false);
+  const [showCapturePhoto, setShowCapturePhoto] = useState(false);
 
   useEffect(() => {
     if (hover) {
@@ -52,7 +54,12 @@ const Avatar = ({ type, image, setImage }) => {
         setGrabPhoto(true);
       },
     },
-    { name: "Take Photo", callback: () => {} },
+    {
+      name: "Take Photo",
+      callback: () => {
+        setShowCapturePhoto(true);
+      },
+    },
     {
       name: "Choose From Library",
       callback: () => {
@@ -121,7 +128,11 @@ const Avatar = ({ type, image, setImage }) => {
               </span>
             </div>
             <div className="flex items-center justify-center h-60 w-60">
-              <img src={image} alt="avatar" className="rounded-full" />
+              <img
+                src={image}
+                alt="avatar"
+                className="rounded-full object-cover w-full h-full"
+              />
             </div>
           </div>
         )}
@@ -134,6 +145,10 @@ const Avatar = ({ type, image, setImage }) => {
           setContextMenu={setIsContextMenuVisible}
         />
       )}
+      
+      {showCapturePhoto && (
+        <CapturePhoto setImage={setImage} hide={setShowCapturePhoto}/>
+      )}
 
       {showPhotoLibrary && (
         <PhotoLibrary
@@ -141,6 +156,7 @@ const Avatar = ({ type, image, setImage }) => {
           hidePhotoLibrary={setShowPhotoLibrary}
         />
       )}
+
       {grabPhoto && <PhotoPicker onChange={photoPickerChange} />}
     </>
   );

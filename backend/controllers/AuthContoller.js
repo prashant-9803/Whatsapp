@@ -50,3 +50,45 @@ exports.googleLogin = async (req, res) => {
       });
   }
 };
+
+exports.onBoardUser = async (req, res) => {
+  try {
+    const { email, name, about, image:profilePicture } = req.body;
+
+    if(!email || !name || !about || !profilePicture) {
+      return res.status(400).json({
+        success: false,
+        error: "All fields are required",
+      });
+    }
+
+    let user = await User.findOne({ email });
+
+    if(!user) {
+      user = await User.create({
+        email,
+        name,
+        about,
+        profilePicture,
+      });
+    }
+
+    // Generate a token for the user
+    const token = jwt.sign({ _id: user._id, email }, process.env.JWT_SECRET, {
+      expiresIn: process.env.JWT_TIMEOUT,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "User created successfully",
+      user,
+      token, // Include the token in the response
+    });
+  }
+  catch(error) {
+    res.status(500).json({
+      success: false,
+      error: "Something went wrong while onboarding user",
+    });
+  }
+}

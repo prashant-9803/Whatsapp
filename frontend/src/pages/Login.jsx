@@ -19,7 +19,6 @@ const Login = () => {
         const result = await googleAuth(authResult.code);
         const { email, name, profilePicture } = result.data.user;
         const isNewUser = result.data.isNewUser
-        console.log("email", email, "name", name, "profilePicture", profilePicture, "isNewUser", isNewUser);
         const token = result.data.token;
         const obj = { email, name, token, profilePicture };
         localStorage.setItem("user", JSON.stringify(obj));
@@ -28,7 +27,7 @@ const Login = () => {
         if (isNewUser) {
           navigate("/onboarding");
         } else {
-          navigate("/");
+          navigate("/chat");
         }
       }
     } catch (error) {
