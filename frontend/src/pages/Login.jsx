@@ -22,12 +22,12 @@ const Login = () => {
         const token = result.data.token;
         const obj = { email, name, token, profilePicture };
         localStorage.setItem("user", JSON.stringify(obj));
-        dispatch(setUser);
+        dispatch(setUser(obj));
 
         if (isNewUser) {
           navigate("/onboarding");
         } else {
-          navigate("/chat");
+          navigate("/");
         }
       }
     } catch (error) {

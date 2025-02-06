@@ -27,13 +27,16 @@ const Onboarding = () => {
           image,
         });
 
+        console.log("Data:", data);
+
         if (data.success) {
           const { email, name, profilePicture, about } = data.user;
+          console.log("email", email, "name", name, "profilePicture", profilePicture, "about", about);
           const token = data.token;
           const obj = { email, name, token, profilePicture, about };
           localStorage.setItem("user", JSON.stringify(obj));
-          dispatch(setUser);
-          navigate("/chat");
+          dispatch(setUser(obj));
+          navigate("/");
         }
         
       } catch (error) {

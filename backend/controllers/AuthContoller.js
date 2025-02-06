@@ -73,6 +73,14 @@ exports.onBoardUser = async (req, res) => {
       });
     }
 
+    user = await User.findByIdAndUpdate(user._id, {
+      email,
+      name,
+      about,
+      profilePicture,
+    }, {
+      new: true,});
+
     // Generate a token for the user
     const token = jwt.sign({ _id: user._id, email }, process.env.JWT_SECRET, {
       expiresIn: process.env.JWT_TIMEOUT,

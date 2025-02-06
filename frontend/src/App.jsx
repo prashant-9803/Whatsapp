@@ -5,6 +5,7 @@ import Onboarding from "./pages/Onboarding";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useState } from "react";
 import Chat from "./components/Chat/Chat";
+import Home from "./pages/Home";
 
 function App() {
 
@@ -28,13 +29,14 @@ function App() {
 
   return (
     <div className="w-screen min-h-screen">
+      <div id="photo-picker-element"></div>
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<GoogleAuthWrapper />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/chat" element={<Chat/>}/>
       </Routes>
 
-      <div id="photo-picker-element"></div>
     </div>
   );
 }
