@@ -42,20 +42,18 @@ exports.googleLogin = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        error: "Something went wrong while google login",
-      });
+    res.status(500).json({
+      success: false,
+      error: "Something went wrong while google login",
+    });
   }
 };
 
 exports.onBoardUser = async (req, res) => {
   try {
-    const { email, name, about, image:profilePicture } = req.body;
+    const { email, name, about, image: profilePicture } = req.body;
 
-    if(!email || !name || !about || !profilePicture) {
+    if (!email || !name || !about || !profilePicture) {
       return res.status(400).json({
         success: false,
         error: "All fields are required",
@@ -64,7 +62,7 @@ exports.onBoardUser = async (req, res) => {
 
     let user = await User.findOne({ email });
 
-    if(!user) {
+    if (!user) {
       user = await User.create({
         email,
         name,
@@ -73,13 +71,18 @@ exports.onBoardUser = async (req, res) => {
       });
     }
 
-    user = await User.findByIdAndUpdate(user._id, {
-      email,
-      name,
-      about,
-      profilePicture,
-    }, {
-      new: true,});
+    user = await User.findByIdAndUpdate(
+      user._id,
+      {
+        email,
+        name,
+        about,
+        profilePicture,
+      },
+      {
+        new: true,
+      }
+    );
 
     // Generate a token for the user
     const token = jwt.sign({ _id: user._id, email }, process.env.JWT_SECRET, {
@@ -92,11 +95,40 @@ exports.onBoardUser = async (req, res) => {
       user,
       token, // Include the token in the response
     });
-  }
-  catch(error) {
+  } catch (error) {
     res.status(500).json({
       success: false,
       error: "Something went wrong while onboarding user",
     });
   }
-}
+};
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({})
+      .select("id email name profilePicture about")
+      .sort({ name: 1 });
+
+    const usersGrupedByInitialLetter = {}
+
+    users.forEach(user => {
+      const initialLetter = user.name.charAt(0).toUpperCase();
+      if (usersGrupedByInitialLetter[initialLetter]) {
+        usersGrupedByInitialLetter[initialLetter].push(user)
+      } else {
+        usersGrupedByInitialLetter[initialLetter] = [user]
+      }
+    })
+      
+    res.status(200).json({
+      success: true,
+      users: usersGrupedByInitialLetter,
+    });
+  } 
+  catch (error) {
+    res.status(500).json({
+      success: false,
+      error: "Something went wrong while getting all users",
+    });
+  }
+};

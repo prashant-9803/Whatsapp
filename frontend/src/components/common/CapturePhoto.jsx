@@ -17,7 +17,7 @@ const CapturePhoto = ({ hide, setImage }) => {
     return () => {
       stream?.getTracks().forEach((track) => track.stop());
     };
-  });
+  }, []);
 
   const capturePhoto = () => {
     const canvas = document.createElement("canvas");
