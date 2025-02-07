@@ -13,16 +13,20 @@ const MessageBar = () => {
 
   const { currentChatUser } = useSelector((state) => state.ui);
   const { user } = useSelector((state) => state.auth);
+  const { socket } = useSelector((state) => state.message);
 
   const sendMessage = async () => {
-
     try {
       const { data } = await axios.post(ADD_MESSAGE_ROUTE, {
         from: user?._id,
         to: currentChatUser?._id,
         message,
       });
-
+      socket.current.emit("send-msg", {
+        from: user?._id,
+        to: currentChatUser?._id,
+        message: data.message,
+      });
       setMessage("");
     } catch (error) {
       console.log("error while sending message controller", error);

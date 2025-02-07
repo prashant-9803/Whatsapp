@@ -63,7 +63,6 @@ exports.getMessages = async (req, res) => {
       { $set: { status: "read" } }
     );
 
-    console.log("unreadMessages", unreadMessages);
 
     return res.status(200).json({
       success: true,
