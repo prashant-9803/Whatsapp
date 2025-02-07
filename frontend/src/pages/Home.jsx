@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import ChatList from "../components/Chatlist/ChatList";
 import Empty from "../components/Empty";
 import Chat from "../components/Chat/Chat";
@@ -8,20 +8,23 @@ import { GET_MESSAGES_ROUTE } from "../utils/ApiRoutes";
 import {addMessage, setMessages, setSocket} from '../slices/messageSlice'
 import { io } from "socket.io-client";
 import { SERVER_URL } from "../utils/ApiRoutes";
+import {SocketContext} from "../context/SocketContext"
 
 
+// var socket
 const Home = () => {
   
   const { currentChatUser } = useSelector((state) => state.ui);
   const {user} = useSelector((state) => state.auth);
   const socket = useRef()
   const dispatch = useDispatch()
+  const {setSocket} = useContext(SocketContext)
   const [socketEvent, setSocketEvent] = useState(false)
 
   useEffect(() => {
-    if(socket.current && !socketEvent) {
-      socket.current.on("msg-recieve", (data) => {
-        dispatch(addMessage(data))
+    if(socket.current ) {
+      socket.current.on("msg-receive", (data) => {
+        dispatch(addMessage(data.message))
       })
       setSocketEvent(true)
     }
@@ -29,17 +32,15 @@ const Home = () => {
 
   useEffect(() => {
     if(user) {
-      console.log("url", SERVER_URL)
       socket.current = io(SERVER_URL)
       socket.current.emit("add-user", user._id)
-      dispatch(setSocket(socket.current))
+      setSocket(socket)
     }
   }, [user])
 
   useEffect(() => {
     const getMessages = async() => {
       const {data: {messages}} = await axios.get(`${GET_MESSAGES_ROUTE}/${user._id}/${currentChatUser._id}`)
-      console.log({messages})
       dispatch(setMessages(messages))
     }
     if(currentChatUser) getMessages()

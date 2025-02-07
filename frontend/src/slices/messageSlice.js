@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     messages: [],
     socket: null,
+    demo: false
 }
 
 const messageSlice = createSlice({
@@ -16,10 +17,13 @@ const messageSlice = createSlice({
             state.socket = action.payload;
         },
         addMessage: (state, action) => {
-            state.messages.push(action.payload);
+            state.messages = [...state.messages, action.payload];
         },
+        setDemo: (state, action) => {
+            state.demo = action.payload
+        }
     }
 })
 
-export const { setMessages, setSocket, addMessage } = messageSlice.actions
+export const { setMessages, setSocket, addMessage, setDemo } = messageSlice.actions
 export default messageSlice.reducer

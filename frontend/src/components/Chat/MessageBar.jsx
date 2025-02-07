@@ -1,11 +1,12 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { BsEmojiSmile } from "react-icons/bs";
 import { FaMicrophone } from "react-icons/fa";
 import { ImAttachment } from "react-icons/im";
 import { MdSend } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { ADD_MESSAGE_ROUTE } from "../../utils/ApiRoutes";
+import { SocketContext } from "../../context/SocketContext";
 
 const MessageBar = () => {
   const dispatch = useDispatch();
@@ -13,8 +14,8 @@ const MessageBar = () => {
 
   const { currentChatUser } = useSelector((state) => state.ui);
   const { user } = useSelector((state) => state.auth);
-  const { socket } = useSelector((state) => state.message);
-
+  const {socket} = useContext(SocketContext)
+  
   const sendMessage = async () => {
     try {
       const { data } = await axios.post(ADD_MESSAGE_ROUTE, {
@@ -22,11 +23,14 @@ const MessageBar = () => {
         to: currentChatUser?._id,
         message,
       });
+            
       socket.current.emit("send-msg", {
         from: user?._id,
         to: currentChatUser?._id,
         message: data.message,
       });
+
+
       setMessage("");
     } catch (error) {
       console.log("error while sending message controller", error);

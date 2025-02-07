@@ -5,6 +5,7 @@ import MessageStatus from "../common/MessageStatus";
 
 const ChatContainer = () => {
   const { messages } = useSelector((state) => state.message);
+
   const { currentChatUser } = useSelector((state) => state.ui);
   const { user } = useSelector((state) => state.auth);
 

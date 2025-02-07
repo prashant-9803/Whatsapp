@@ -3,8 +3,6 @@ const Message = require("../models/Message");
 exports.addMessage = async (req, res) => {
   try {
     const { message, from, to } = req.body;
-    console.log("message", message, "from", from, "to", to);
-
     // onlineusers todo
     const getUser = onlineUsers ? onlineUsers.get(to) : null;
 
@@ -62,7 +60,6 @@ exports.getMessages = async (req, res) => {
       { _id: { $in: unreadMessages } },
       { $set: { status: "read" } }
     );
-
 
     return res.status(200).json({
       success: true,
