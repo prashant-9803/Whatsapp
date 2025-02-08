@@ -4,7 +4,11 @@ npm-debug.log
 yarn.lock  
 package-lock.json  
 
-uploads/images/
+# Ignore all files in uploads/images/
+uploads/images/*
+
+# But do not ignore demoImg.jpg
+
 
 # Environment variables  
 .env  
