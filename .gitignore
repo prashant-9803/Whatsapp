@@ -7,6 +7,9 @@ package-lock.json
 # Ignore all files in uploads/images/
 uploads/images/*
 
+uploads/images/
+uploads/
+
 # But do not ignore demoImg.jpg
 
 

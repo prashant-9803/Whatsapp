@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { calculateTime } from "../../utils/CalculateTime";
 import MessageStatus from "../common/MessageStatus";
 import ImageMessage from "./ImageMessage";
+import PdfMessage from "./PdfMessage";
 
 const ChatContainer = () => {
   const { messages } = useSelector((state) => state.message);
@@ -38,23 +39,20 @@ const ChatContainer = () => {
                       <span className="break-all">{message.message}</span>
                       <div className="flex gap-1 items-end ">
                         <span className="text-bubble-meta text-[11px] pt-1 min-w-fit ">
-                          {
-                            calculateTime(message.createdAt)
-                          }
+                          {calculateTime(message.createdAt)}
                         </span>
                         <span>
-                          {
-                            message.sender._id === user._id && <MessageStatus messageStatus={message.status}/>
-                          }
+                          {message.sender._id === user._id && (
+                            <MessageStatus messageStatus={message.status} />
+                          )}
                         </span>
                       </div>
                     </div>
                   )}
-                  {
-                    message.type === "image" && (
-                      <ImageMessage message={message}/>
-                    )
-                  }
+                  {message.type === "image" && (
+                    <ImageMessage message={message} />
+                  )}
+                  {message.type === "file" && <PdfMessage message={message} />}
                 </div>
               );
             })}

@@ -79,23 +79,26 @@ exports.addImageMessage = async (req, res) => {
   try {
     const { from, to } = req.query;
     if (req.file) {
-      console.log("files:, ", req.file.originalname);
+      console.log("files:, ", req.file);
       const date = Date.now();
       const getUser = onlineUsers ? onlineUsers.get(to) : null;
 
       const originalName = req.file.originalname;
-      let fileName = "uploads/images/" + date + originalName;
+      let fileName = "uploads/images/" + date + "_" + originalName;
       console.log(fileName);
       console.log(req.file.path);
 
       renameSync(req.file.path, fileName);
 
       if (from && to) {
+        // Determine the type based on the file extension
+        const fileType = originalName.endsWith('.pdf') ? 'file' : 'image';
+
         const message = await Message.create({
           sender: from,
           receiver: to,
           message: fileName,
-          type: "image",
+          type: fileType, // Use the determined file type
           status: getUser ? "delivered" : "sent",
         }).then((message) => message.populate(["sender", "receiver"]));
 
