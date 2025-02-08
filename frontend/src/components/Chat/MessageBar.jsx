@@ -29,6 +29,7 @@ const MessageBar = () => {
 
   const photoPickerChange = async (e) => {
     try {
+      console.log(e.target.files[0]);
       const file = e.target.files[0];
 
       let formData = new FormData();

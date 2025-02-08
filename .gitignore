@@ -4,6 +4,8 @@ npm-debug.log
 yarn.lock  
 package-lock.json  
 
+uploads/
+
 # Environment variables  
 .env  
 .env.local  
@@ -14,6 +16,7 @@ package-lock.json
 dist/  
 build/  
 .cache/  
+
 
 
 
