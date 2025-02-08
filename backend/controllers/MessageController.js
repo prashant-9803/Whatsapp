@@ -126,3 +126,53 @@ exports.addImageMessage = async (req, res) => {
     });
   }
 };
+
+exports.addAudioMessage = async (req, res) => {
+  try {
+    const { from, to } = req.query;
+    if (req.file) {
+      console.log("files:, ", req.file);
+      const date = Date.now();
+      const getUser = onlineUsers ? onlineUsers.get(to) : null;
+
+      const originalName = req.file.originalname;
+      let fileName = "uploads/recordings/" + date + "_" + originalName;
+      console.log(fileName);
+      console.log(req.file.path);
+
+      renameSync(req.file.path, fileName);
+
+      if (from && to) {
+
+        const message = await Message.create({
+          sender: from,
+          receiver: to,
+          message: fileName,
+          type: "audio", // Use the determined file type
+          status: getUser ? "delivered" : "sent",
+        }).then((message) => message.populate(["sender", "receiver"]));
+
+        return res.status(200).json({
+          success: true,
+          result: "Audio added successfully",
+          message,
+        });
+      }
+
+      return res.status(400).json({
+        success: false,
+        error: "All fields are required",
+      });
+    }
+    return res.status(400).json({
+      success: false,
+      error: "Audio is Required",
+    });
+  } 
+  catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+}

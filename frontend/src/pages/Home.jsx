@@ -16,7 +16,7 @@ const Home = () => {
   
   const { currentChatUser } = useSelector((state) => state.ui);
   const {user} = useSelector((state) => state.auth);
-  const socket = useRef()
+  const socket = useRef(null)
   const dispatch = useDispatch()
   const {setSocket} = useContext(SocketContext)
   const [socketEvent, setSocketEvent] = useState(false)
