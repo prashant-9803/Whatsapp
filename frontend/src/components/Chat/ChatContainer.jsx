@@ -2,6 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { calculateTime } from "../../utils/CalculateTime";
 import MessageStatus from "../common/MessageStatus";
+import ImageMessage from "./ImageMessage";
 
 const ChatContainer = () => {
   const { messages } = useSelector((state) => state.message);
@@ -49,6 +50,11 @@ const ChatContainer = () => {
                       </div>
                     </div>
                   )}
+                  {
+                    message.type === "image" && (
+                      <ImageMessage message={message}/>
+                    )
+                  }
                 </div>
               );
             })}

@@ -12,3 +12,4 @@ export const GET_ALL_CONTACTS_ROUTE = `${AUTH_ROUTES}/get-contacts`;
 //api endpoints for messages
 export const ADD_MESSAGE_ROUTE = `${MESSAGE_ROUTES}/add-message`;
 export const GET_MESSAGES_ROUTE = `${MESSAGE_ROUTES}/get-messages`;
+export const ADD_IMAGE_MESSAGE_ROUTE = `${MESSAGE_ROUTES}/add-image-message`;

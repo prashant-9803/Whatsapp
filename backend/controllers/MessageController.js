@@ -1,4 +1,5 @@
 const Message = require("../models/Message");
+const renameSync = require("fs").renameSync;
 
 exports.addMessage = async (req, res) => {
   try {
@@ -67,6 +68,55 @@ exports.getMessages = async (req, res) => {
       messages,
     });
   } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+exports.addImageMessage = async (req, res) => {
+  try {
+    const { from, to } = req.query;
+    if (req.file) {
+      console.log("files:, ", req.file.originalname);
+      const date = Date.now();
+      const getUser = onlineUsers ? onlineUsers.get(to) : null;
+
+      const originalName = req.file.originalname;
+      let fileName = "uploads/images/" + date + originalName;
+      console.log(fileName);
+      console.log(req.file.path);
+
+      renameSync(req.file.path, fileName);
+
+      if (from && to) {
+        const message = await Message.create({
+          sender: from,
+          receiver: to,
+          message: fileName,
+          type: "image",
+          status: getUser ? "delivered" : "sent",
+        }).then((message) => message.populate(["sender", "receiver"]));
+
+        return res.status(200).json({
+          success: true,
+          result: "Image added successfully",
+          message,
+        });
+      }
+
+      return res.status(400).json({
+        success: false,
+        error: "All fields are required",
+      });
+    }
+    return res.status(400).json({
+      success: false,
+      error: "Image is Required",
+    });
+  } 
+  catch (error) {
     return res.status(500).json({
       success: false,
       error: error.message,
