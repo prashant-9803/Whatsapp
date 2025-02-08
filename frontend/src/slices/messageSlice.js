@@ -3,7 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     messages: [],
     socket: null,
-    demo: false
+    demo: false,
+    messageSearch: false
 }
 
 const messageSlice = createSlice({
@@ -21,9 +22,12 @@ const messageSlice = createSlice({
         },
         setDemo: (state, action) => {
             state.demo = action.payload
+        },
+        setMessageSearch: (state, action) => {
+            state.messageSearch = !state.messageSearch
         }
     }
 })
 
-export const { setMessages, setSocket, addMessage, setDemo } = messageSlice.actions
+export const { setMessages, setSocket, addMessage, setDemo, setMessageSearch } = messageSlice.actions
 export default messageSlice.reducer
