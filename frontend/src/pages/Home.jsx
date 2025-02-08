@@ -22,9 +22,13 @@ const Home = () => {
   const [socketEvent, setSocketEvent] = useState(false)
 
   useEffect(() => {
-    if(socket.current ) {
+    //confusion about the && !secoketEvent condition
+    if(socket.current) {
       socket.current.on("msg-receive", (data) => {
-        dispatch(addMessage(data.message))
+        dispatch(addMessage({
+          ...data.message,
+          fromSelf: true
+        }))
       })
       setSocketEvent(true)
     }

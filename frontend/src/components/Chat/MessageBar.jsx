@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { BsEmojiSmile } from "react-icons/bs";
 import { FaMicrophone } from "react-icons/fa";
 import { ImAttachment } from "react-icons/im";
@@ -7,14 +7,44 @@ import { MdSend } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { ADD_MESSAGE_ROUTE } from "../../utils/ApiRoutes";
 import { SocketContext } from "../../context/SocketContext";
+import { addMessage } from "../../slices/messageSlice";
+import EmojiPicker from "emoji-picker-react"
 
 const MessageBar = () => {
-  const dispatch = useDispatch();
-  const [message, setMessage] = useState("");
 
+  const [message, setMessage] = useState("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false)
+
+  const {socket} = useContext(SocketContext)
   const { currentChatUser } = useSelector((state) => state.ui);
   const { user } = useSelector((state) => state.auth);
-  const {socket} = useContext(SocketContext)
+  const dispatch = useDispatch();
+  const emojiPickerRef = useRef(null)
+
+  const handleEmojiModal = () => {
+    setShowEmojiPicker(!showEmojiPicker)
+  }
+
+  const handleEmojiClick = (emoji) => {
+    setMessage((prevMessage) => (prevMessage + emoji.emoji))
+  }
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if(event.target.id !== "emoji-open") {
+        if(emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
+          setShowEmojiPicker(false)
+        }
+      }
+    }
+
+    document.addEventListener("click", handleOutsideClick)
+
+    return () => {
+      document.removeEventListener("click", handleOutsideClick)
+    }
+
+  }, [])
   
   const sendMessage = async () => {
     try {
@@ -29,10 +59,11 @@ const MessageBar = () => {
         to: currentChatUser?._id,
         message: data.message,
       });
-
-
+      
+      dispatch(addMessage(data.message));
       setMessage("");
-    } catch (error) {
+    } 
+    catch (error) {
       console.log("error while sending message controller", error);
     }
   };
@@ -44,7 +75,14 @@ const MessageBar = () => {
           <BsEmojiSmile
             className="text-panel-header-icon cursor-pointer text-xl"
             title="Emoji"
+            id="emoji-open"
+            onClick={handleEmojiModal}
           />
+          {showEmojiPicker && (
+            <div ref={emojiPickerRef} className="absolute bottom-24 left-16 z-40">
+                <EmojiPicker onEmojiClick={handleEmojiClick} theme="dark"/>
+            </div>
+          )}
           <ImAttachment
             className="text-panel-header-icon cursor-pointer text-xl"
             title="Attach File"
