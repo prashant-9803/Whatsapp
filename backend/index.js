@@ -15,6 +15,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/uploads/images", express.static("uploads/images"));
+app.use("/uploads/recordings", express.static("uploads/recordings"));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);

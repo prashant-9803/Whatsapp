@@ -4,6 +4,7 @@ import { calculateTime } from "../../utils/CalculateTime";
 import MessageStatus from "../common/MessageStatus";
 import ImageMessage from "./ImageMessage";
 import PdfMessage from "./PdfMessage";
+import VoiceMessage from "./VoiceMessage";
 
 const ChatContainer = () => {
   const { messages } = useSelector((state) => state.message);
@@ -53,6 +54,8 @@ const ChatContainer = () => {
                     <ImageMessage message={message} />
                   )}
                   {message.type === "file" && <PdfMessage message={message} />}
+
+                  {message.type === "audio" && <VoiceMessage message={message} />}
                 </div>
               );
             })}

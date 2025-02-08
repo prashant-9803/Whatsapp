@@ -75,18 +75,30 @@ const CaptureAudio = ({ hide }) => {
 
 
   useEffect(() => {
-    if (waveform) handleStartRecording();
-  }, [waveform]);
+      if (waveform) handleStartRecording();
+    }, [waveform]);
+    
+    
+    useEffect(() => {
+      if (recordedAudio) {
+        const updatePlaybackTime = () => {
+          setCurrentPlaybackTime(recordedAudio.currentTime);
+        };
+        recordedAudio.addEventListener("timeupdate", updatePlaybackTime);
+        return () =>
+          recordedAudio.removeEventListener("timeupdate", updatePlaybackTime);
+      }
+    }, [recordedAudio]);
 
 
-
-  const handleStartRecording = () => {
+    
+    const handleStartRecording = () => {
     setRecordingDuration(0);
     setCurrentPlaybackTime(0);
     setTotalDuration(0);
     setIsRecording(true);
     setRecordedAudio(null)
-    
+
     navigator.mediaDevices
       .getUserMedia({ audio: true })
       .then((stream) => {
@@ -133,18 +145,6 @@ const CaptureAudio = ({ hide }) => {
     }
   };
 
-
-
-  useEffect(() => {
-    if (recordedAudio) {
-      const updatePlaybackTime = () => {
-        setCurrentPlaybackTime(recordedAudio.currentTime);
-      };
-      recordedAudio.addEventListener("timeupdate", updatePlaybackTime);
-      return () =>
-        recordedAudio.removeEventListener("timeupdate", updatePlaybackTime);
-    }
-  }, [recordedAudio]);
 
 
 
