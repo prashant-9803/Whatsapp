@@ -7,6 +7,9 @@ const initialState = {
     messageSearch: false,
     userContacts : [],
     onlineUsers: [],
+
+    filteredContacts: [],
+    contactSearch: "", // Adding this to track search input
 }
 
 const messageSlice = createSlice({
@@ -34,8 +37,16 @@ const messageSlice = createSlice({
         setOnlineUsers: (state, action) => {
             state.onlineUsers = action.payload
         },
+        setContactSearch: (state, action) => {
+            state.contactSearch = action.payload;
+            console.log("payload: ", action.payload);
+            state.filteredContacts = state.userContacts.filter((contact) =>
+                contact._doc.name.toLowerCase().includes(action.payload.toLowerCase())
+            );
+        },
+        
     }
 })
 
-export const { setMessages, setSocket, addMessage, setDemo, setMessageSearch, setUserContacts, setOnlineUsers } = messageSlice.actions
+export const { setMessages, setSocket, addMessage, setDemo, setMessageSearch, setUserContacts, setOnlineUsers,setContactSearch } = messageSlice.actions
 export default messageSlice.reducer
