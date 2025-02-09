@@ -39,7 +39,6 @@ const messageSlice = createSlice({
         },
         setContactSearch: (state, action) => {
             state.contactSearch = action.payload;
-            console.log("payload: ", action.payload);
             state.filteredContacts = state.userContacts.filter((contact) =>
                 contact._doc.name.toLowerCase().includes(action.payload.toLowerCase())
             );

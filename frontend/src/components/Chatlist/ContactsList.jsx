@@ -11,6 +11,23 @@ import ContactList from "./ContactList";
 const ContactsList = () => {
   const dispatch = useDispatch();
   const [allContacts, setAllContacts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchContacts, setSearchContacts] = useState([]);
+
+  useEffect(() => {
+    if (searchTerm.length) {
+      const filteredData = {};
+      Object.keys(allContacts).forEach((key) => {
+        filteredData[key] = allContacts[key].filter((contact) =>
+          contact.name.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      });
+
+      setSearchContacts(filteredData);
+    } else {
+      setSearchContacts(allContacts);
+    }
+  }, [searchTerm]);
 
   useEffect(() => {
     const getContacts = async () => {
@@ -20,6 +37,7 @@ const ContactsList = () => {
         } = await axios.get(GET_ALL_CONTACTS_ROUTE);
         console.log(users);
         setAllContacts(users);
+        setSearchContacts(users)
       } catch (error) {
         console.log(error);
       }
@@ -51,28 +69,28 @@ const ContactsList = () => {
               <input
                 type="text"
                 placeholder="Search Contacts"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="bg-transparent text-sm focus:outline-none text-white w-full py-1"
               />
             </div>
           </div>
         </div>
 
-        {Object.entries(allContacts).map(([initialLetter, userList]) => {
-          return (
+        {Object.entries(searchContacts).map(([initialLetter, userList]) => 
+          userList.length > 0 && (
             <div key={Date.now() + initialLetter}>
               <div className="text-teal-light pl-10 py-5">{initialLetter}</div>
-              {userList.map((contact) => {
-                return (
-                  <ContactList
-                    data={contact}
-                    isContactsPage={true}
-                    key={contact._id}
-                  />
-                );
-              })}
+              {userList.map((contact) => (
+                <ContactList
+                  data={contact}
+                  isContactsPage={true}
+                  key={contact._id}
+                />
+              ))}
             </div>
-          );
-        })}
+          )
+        )}
       </div>
     </div>
   );
