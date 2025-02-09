@@ -6,6 +6,7 @@ import { setContactsPage } from "../../slices/uiSlice";
 import { BiSearchAlt2 } from "react-icons/bi";
 import axios from "axios";
 import ChatListItem from "./ChatListItem";
+import ContactList from "./ContactList";
 
 const ContactsList = () => {
   const dispatch = useDispatch();
@@ -17,7 +18,7 @@ const ContactsList = () => {
         const {
           data: { users },
         } = await axios.get(GET_ALL_CONTACTS_ROUTE);
-
+        console.log(users);
         setAllContacts(users);
       } catch (error) {
         console.log(error);
@@ -62,7 +63,7 @@ const ContactsList = () => {
               <div className="text-teal-light pl-10 py-5">{initialLetter}</div>
               {userList.map((contact) => {
                 return (
-                  <ChatListItem
+                  <ContactList
                     data={contact}
                     isContactsPage={true}
                     key={contact._id}

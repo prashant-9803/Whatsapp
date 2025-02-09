@@ -19,12 +19,12 @@ exports.addMessage = async (req, res) => {
 
       // Update sender's sentMessages
       await User.findByIdAndUpdate(from, {
-        $push: { sentMessages: newMessage._id }
+        $push: { sentMessages: newMessage._id },
       });
 
       // Update receiver's receivedMessages
       await User.findByIdAndUpdate(to, {
-        $push: { receivedMessages: newMessage._id }
+        $push: { receivedMessages: newMessage._id },
       });
 
       return res.status(200).json({
@@ -113,6 +113,16 @@ exports.addImageMessage = async (req, res) => {
           status: getUser ? "delivered" : "sent",
         }).then((message) => message.populate(["sender", "receiver"]));
 
+        // Update sender's sentMessages
+        await User.findByIdAndUpdate(from, {
+          $push: { sentMessages: message._id },
+        });
+
+        // Update receiver's receivedMessages
+        await User.findByIdAndUpdate(to, {
+          $push: { receivedMessages: message._id },
+        });
+
         return res.status(200).json({
           success: true,
           result: "Image added successfully",
@@ -161,6 +171,16 @@ exports.addAudioMessage = async (req, res) => {
           status: getUser ? "delivered" : "sent",
         }).then((message) => message.populate(["sender", "receiver"]));
 
+        // Update sender's sentMessages
+        await User.findByIdAndUpdate(from, {
+          $push: { sentMessages: message._id },
+        });
+
+        // Update receiver's receivedMessages
+        await User.findByIdAndUpdate(to, {
+          $push: { receivedMessages: message._id },
+        });
+
         return res.status(200).json({
           success: true,
           result: "Audio added successfully",
@@ -201,15 +221,11 @@ exports.getInitialContactsWithMessages = async (req, res) => {
         options: { sort: { createdAt: -1 } },
       });
 
-
-      const messages = [
-        ...user.sentMessages,
-        ...user.receivedMessages,]
+    const messages = [...user.sentMessages, ...user.receivedMessages];
 
     messages.sort((a, b) => {
       return b.createdAt.getTime() - a.createdAt.getTime();
     });
-
 
     const users = new Map();
     const messageStatusChange = [];
@@ -219,18 +235,18 @@ exports.getInitialContactsWithMessages = async (req, res) => {
       const senderId = msg.sender._id.toString();
       const receiverId = msg.receiver._id.toString();
       const userIdStr = userId.toString();
-      
+
       const isSender = senderId === userIdStr;
       // Consistent key format using string IDs
       const calculatedId = isSender ? receiverId : senderId;
 
       console.log("message:", msg);
-      if(msg.status === "sent" ) {
-        messageStatusChange.push(msg._id)
+      if (msg.status === "sent") {
+        messageStatusChange.push(msg._id);
       }
 
-      if(!users.get(calculatedId)) {
-        const {id, type, message, status, createdAt, sender, receiver} = msg
+      if (!users.get(calculatedId)) {
+        const { id, type, message, status, createdAt, sender, receiver } = msg;
 
         let user = {
           messageId: id,
@@ -242,39 +258,35 @@ exports.getInitialContactsWithMessages = async (req, res) => {
           receiver,
         };
 
-
-        if(isSender) {
+        if (isSender) {
           user = {
             ...user,
             ...msg.receiver,
             totalUnreadMessages: 0,
-          }
-        }
-        else {
+          };
+        } else {
           user = {
             ...user,
             ...msg.sender,
             totalUnreadMessages: status !== "read" ? 1 : 0,
-          }
+          };
         }
 
         users.set(calculatedId, {
           ...user,
-          _id: calculatedId
-        })
-
-      }
-      else if(msg.status !== "read" && !isSender) {
+          _id: calculatedId,
+        });
+      } else if (msg.status !== "read" && !isSender) {
         const user = users.get(calculatedId);
         users.set(calculatedId, {
           ...user,
           _id: calculatedId,
-          totalUnreadMessages: user.totalUnreadMessages + 1
-        })
+          totalUnreadMessages: user.totalUnreadMessages + 1,
+        });
       }
-    })
+    });
 
-    if(messageStatusChange.length > 0) {
+    if (messageStatusChange.length > 0) {
       await Message.updateMany(
         { _id: { $in: messageStatusChange } },
         { $set: { status: "delivered" } }
@@ -286,10 +298,7 @@ exports.getInitialContactsWithMessages = async (req, res) => {
       users: Array.from(users.values()),
       onlineUsers: Array.from(onlineUsers.keys()),
     });
-   
-
-  } 
-  catch (error) {
+  } catch (error) {
     return res.status(500).json({
       success: false,
       error: error.message,

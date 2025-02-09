@@ -10,7 +10,6 @@ const List = () => {
   const {user} = useSelector((state) => state.auth)
   const {userContacts} = useSelector((state) => state.message)
   const dispatch = useDispatch();
-
   
   
   useEffect(() => {
@@ -41,7 +40,7 @@ const List = () => {
     <div className='bg-search-input-container-background flex-auto overflow-auto max-h-full custom-scrollbar'>
       {
         userContacts && userContacts.map((contact) => (
-          <ChatListItem key={contact?._doc?._id} data={contact?._doc} />
+          <ChatListItem key={contact?._doc?._id} data={contact} />
         ))
       }
 
