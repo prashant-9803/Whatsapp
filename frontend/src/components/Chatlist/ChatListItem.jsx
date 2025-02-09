@@ -9,6 +9,8 @@ const ChatListItem = ({ data, isContactsPage = false }) => {
   const {user} = useSelector(state => state.auth)
   const { currentChatUser } = useSelector(state => state.ui)
 
+  console.log("Data in chat list item", data);
+
   const handleContactClick = () => {
     // if(currentChatUser?._id == data?.id) {
       dispatch(setCurrentChatUser(data))

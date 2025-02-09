@@ -4,7 +4,9 @@ const initialState = {
     messages: [],
     socket: null,
     demo: false,
-    messageSearch: false
+    messageSearch: false,
+    userContacts : [],
+    onlineUsers: [],
 }
 
 const messageSlice = createSlice({
@@ -25,9 +27,15 @@ const messageSlice = createSlice({
         },
         setMessageSearch: (state, action) => {
             state.messageSearch = !state.messageSearch
-        }
+        },
+        setUserContacts: (state, action) => {
+            state.userContacts = action.payload
+        },
+        setOnlineUsers: (state, action) => {
+            state.onlineUsers = action.payload
+        },
     }
 })
 
-export const { setMessages, setSocket, addMessage, setDemo, setMessageSearch } = messageSlice.actions
+export const { setMessages, setSocket, addMessage, setDemo, setMessageSearch, setUserContacts, setOnlineUsers } = messageSlice.actions
 export default messageSlice.reducer

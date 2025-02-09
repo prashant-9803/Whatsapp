@@ -1,5 +1,6 @@
 const Message = require("../models/Message");
 const renameSync = require("fs").renameSync;
+const User = require("../models/User");
 
 exports.addMessage = async (req, res) => {
   try {
@@ -15,6 +16,16 @@ exports.addMessage = async (req, res) => {
         message,
         status: getUser ? "delivered" : "sent",
       }).then((message) => message.populate(["sender", "receiver"]));
+
+      // Update sender's sentMessages
+      await User.findByIdAndUpdate(from, {
+        $push: { sentMessages: newMessage._id }
+      });
+
+      // Update receiver's receivedMessages
+      await User.findByIdAndUpdate(to, {
+        $push: { receivedMessages: newMessage._id }
+      });
 
       return res.status(200).json({
         success: true,
@@ -92,7 +103,7 @@ exports.addImageMessage = async (req, res) => {
 
       if (from && to) {
         // Determine the type based on the file extension
-        const fileType = originalName.endsWith('.pdf') ? 'file' : 'image';
+        const fileType = originalName.endsWith(".pdf") ? "file" : "image";
 
         const message = await Message.create({
           sender: from,
@@ -118,8 +129,7 @@ exports.addImageMessage = async (req, res) => {
       success: false,
       error: "Image is Required",
     });
-  } 
-  catch (error) {
+  } catch (error) {
     return res.status(500).json({
       success: false,
       error: error.message,
@@ -143,7 +153,6 @@ exports.addAudioMessage = async (req, res) => {
       renameSync(req.file.path, fileName);
 
       if (from && to) {
-
         const message = await Message.create({
           sender: from,
           receiver: to,
@@ -168,6 +177,117 @@ exports.addAudioMessage = async (req, res) => {
       success: false,
       error: "Audio is Required",
     });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+exports.getInitialContactsWithMessages = async (req, res) => {
+  try {
+    const userId = req.params.from;
+
+    const user = await User.findOne({ _id: userId })
+      .populate({
+        path: "sentMessages",
+        populate: [{ path: "receiver" }, { path: "sender" }],
+        options: { sort: { createdAt: -1 } },
+      })
+      .populate({
+        path: "receivedMessages",
+        populate: [{ path: "receiver" }, { path: "sender" }],
+        options: { sort: { createdAt: -1 } },
+      });
+
+
+      const messages = [
+        ...user.sentMessages,
+        ...user.receivedMessages,]
+
+    messages.sort((a, b) => {
+      return b.createdAt.getTime() - a.createdAt.getTime();
+    });
+
+
+    const users = new Map();
+    const messageStatusChange = [];
+
+    messages.forEach((msg) => {
+      // Ensure consistent ID comparison by stringifying
+      const senderId = msg.sender._id.toString();
+      const receiverId = msg.receiver._id.toString();
+      const userIdStr = userId.toString();
+      
+      const isSender = senderId === userIdStr;
+      // Consistent key format using string IDs
+      const calculatedId = isSender ? receiverId : senderId;
+
+      console.log("message:", msg);
+      if(msg.status === "sent" ) {
+        messageStatusChange.push(msg._id)
+      }
+
+      if(!users.get(calculatedId)) {
+        const {id, type, message, status, createdAt, sender, receiver} = msg
+
+        let user = {
+          messageId: id,
+          type,
+          message,
+          status,
+          createdAt,
+          sender,
+          receiver,
+        };
+
+
+        if(isSender) {
+          user = {
+            ...user,
+            ...msg.receiver,
+            totalUnreadMessages: 0,
+          }
+        }
+        else {
+          user = {
+            ...user,
+            ...msg.sender,
+            totalUnreadMessages: status !== "read" ? 1 : 0,
+          }
+        }
+
+        users.set(calculatedId, {
+          ...user,
+          _id: calculatedId
+        })
+
+      }
+      else if(msg.status !== "read" && !isSender) {
+        const user = users.get(calculatedId);
+        users.set(calculatedId, {
+          ...user,
+          _id: calculatedId,
+          totalUnreadMessages: user.totalUnreadMessages + 1
+        })
+      }
+    })
+
+    if(messageStatusChange.length > 0) {
+      await Message.updateMany(
+        { _id: { $in: messageStatusChange } },
+        { $set: { status: "delivered" } }
+      );
+    }
+    return res.status(200).json({
+      success: true,
+      result: "Messages fetched successfully",
+      users: Array.from(users.values()),
+      onlineUsers: Array.from(onlineUsers.keys()),
+    });
+   
+
   } 
   catch (error) {
     return res.status(500).json({
@@ -175,4 +295,4 @@ exports.addAudioMessage = async (req, res) => {
       error: error.message,
     });
   }
-}
+};

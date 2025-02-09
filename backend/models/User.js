@@ -1,15 +1,6 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-  // name: {
-  //   firstName: {
-  //     type: String,
-  //     required: true,
-  //   },
-  //   lastName: {
-  //     type: String,
-  //   },
-  // },
   name: {
     type: String,
     required: true,
@@ -35,12 +26,14 @@ const userSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Message",
+      default: []
     },
   ],
   receivedMessages: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Message",
+      default: []
     },
   ],
 });
