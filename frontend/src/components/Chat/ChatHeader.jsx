@@ -7,12 +7,35 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { current } from "@reduxjs/toolkit";
 import { setMessageSearch } from "../../slices/messageSlice";
+import { setVideoCall, setVoiceCall } from "../../slices/uiSlice";
 
 const ChatHeader = () => {
 
-  const dispatch = useDispatch()
-  const {currentChatUser} = useSelector(state => state.ui) 
+  const { currentChatUser } = useSelector((state) => state.ui);
+  const dispatch = useDispatch();
 
+
+  const handleVoiceCall = () => {
+    dispatch(
+      setVoiceCall({
+        ...currentChatUser,
+        type: "out-going",
+        callType: "voice",
+        roomId: Date.now(),
+      })
+    );
+  };
+
+  const handleVideoCall = () => {
+    dispatch(
+      setVideoCall({
+        ...currentChatUser,
+        type: "out-going",
+        callType: "video",
+        roomId: Date.now(),
+      })
+    );
+  };
 
   return (
     <div className="h-16 px-4 py-3 flex justify-between items-center bg-panel-header-background z-10">
@@ -26,9 +49,12 @@ const ChatHeader = () => {
       </div>
 
       <div className="flex gap-6">
-        <MdCall className="text-panel-header-icon cursor-pointer text-xl" />
-        <IoVideocam className="text-panel-header-icon cursor-pointer text-xl" />
-        <BiSearchAlt2 onClick={() => dispatch(setMessageSearch())} className="text-panel-header-icon cursor-pointer text-xl" />
+        <MdCall onClick={handleVoiceCall} className="text-panel-header-icon cursor-pointer text-xl" />
+        <IoVideocam onClick={handleVideoCall} className="text-panel-header-icon cursor-pointer text-xl" />
+        <BiSearchAlt2
+          onClick={() => dispatch(setMessageSearch())}
+          className="text-panel-header-icon cursor-pointer text-xl"
+        />
         <BsThreeDotsVertical className="text-panel-header-icon cursor-pointer text-xl" />
       </div>
     </div>

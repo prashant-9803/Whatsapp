@@ -2,7 +2,13 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     contactsPage: false,
-    currentChatUser: undefined
+    currentChatUser: undefined,
+    
+    videoCall: undefined,
+    voiceCall: undefined,
+    incomingVoiceCall: undefined,
+    incomingVideoCall: undefined,
+    endCall: undefined
 }
 
 const uiSlice = createSlice({
@@ -15,8 +21,31 @@ const uiSlice = createSlice({
         setCurrentChatUser: (state, action) => {
             state.currentChatUser = action.payload
         },
+        setVideoCall: (state, action) => {
+            state.videoCall = action.payload
+        },
+        setVoiceCall: (state, action) => {
+            state.voiceCall = action.payload
+        },
+        setIncomingVoiceCall: (state, action) => {
+            state.incomingVoiceCall = action.payload
+        },
+        setIncomingVideoCall: (state, action) => {
+            state.incomingVideoCall = action.payload
+        },
+        setEndCall: (state) => {
+            console.log("end call");
+            state.voiceCall = undefined;
+            state.videoCall = undefined;
+            state.incomingVoiceCall = undefined;
+            state.incomingVideoCall = undefined;
+        },
     },
 })
 
-export const { setContactsPage, setCurrentChatUser } = uiSlice.actions;
+export const { setContactsPage, setCurrentChatUser, setVideoCall,
+    setVoiceCall,
+    setIncomingVoiceCall,
+    setIncomingVideoCall,
+    setEndCall } = uiSlice.actions;
 export default uiSlice.reducer 
