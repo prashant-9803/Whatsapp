@@ -8,7 +8,7 @@ const initialState = {
     voiceCall: undefined,
     incomingVoiceCall: undefined,
     incomingVideoCall: undefined,
-    endCall: undefined
+    endCall: undefined,
 }
 
 const uiSlice = createSlice({
@@ -40,6 +40,9 @@ const uiSlice = createSlice({
             state.incomingVoiceCall = undefined;
             state.incomingVideoCall = undefined;
         },
+        setExitChat: (state) => {
+            state.currentChatUser = undefined;
+        }
     },
 })
 
@@ -47,5 +50,5 @@ export const { setContactsPage, setCurrentChatUser, setVideoCall,
     setVoiceCall,
     setIncomingVoiceCall,
     setIncomingVideoCall,
-    setEndCall } = uiSlice.actions;
+    setEndCall, setExitChat } = uiSlice.actions;
 export default uiSlice.reducer 

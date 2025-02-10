@@ -6,6 +6,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useState } from "react";
 import Chat from "./components/Chat/Chat";
 import Home from "./pages/Home";
+import Logout from "./pages/Logout";
 
 function App() {
 
@@ -35,6 +36,7 @@ function App() {
         <Route path="/login" element={<GoogleAuthWrapper />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/chat" element={<Chat/>}/>
+        <Route path="/logout" element={<Logout />} />
       </Routes>
 
     </div>

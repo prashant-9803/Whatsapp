@@ -5,7 +5,7 @@ import Chat from "../components/Chat/Chat";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { GET_MESSAGES_ROUTE } from "../utils/ApiRoutes";
-import { addMessage, setMessages, setSocket } from "../slices/messageSlice";
+import { addMessage, setMessages, setOnlineUsers, setSocket } from "../slices/messageSlice";
 import { io } from "socket.io-client";
 import { SERVER_URL } from "../utils/ApiRoutes";
 import { SocketContext } from "../context/SocketContext";
@@ -66,6 +66,10 @@ const Home = () => {
       socket.current.on("video-call-rejected", ({ from, roomId, callType }) => {
         dispatch(setEndCall());
       });
+
+      socket.current.on("online-users", ({ onlineUsers }) => {
+        dispatch(setOnlineUsers(onlineUsers));
+      })
 
       setSocketEvent(true);
     }
