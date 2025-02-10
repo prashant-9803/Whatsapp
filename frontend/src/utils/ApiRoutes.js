@@ -8,6 +8,7 @@ const MESSAGE_ROUTES = `${SERVER_URL}/api/messages`;
 export const CHECK_USER_ROUTE = `${AUTH_ROUTES}/check-user`;
 export const ONBOARD_USER_ROUTE = `${AUTH_ROUTES}/onboard-user`;
 export const GET_ALL_CONTACTS_ROUTE = `${AUTH_ROUTES}/get-contacts`;
+export const GET_CALL_TOKEN = `${AUTH_ROUTES}/generate-token`;
 
 //api endpoints for messages
 export const ADD_MESSAGE_ROUTE = `${MESSAGE_ROUTES}/add-message`;

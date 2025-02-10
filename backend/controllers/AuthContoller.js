@@ -2,6 +2,7 @@ const axios = require("axios");
 const jwt = require("jsonwebtoken");
 const { oauth2client } = require("../utils/GoogleConfig.js");
 const User = require("../models/User.js");
+const { generateToken04 } = require("../utils/TokenGenerator.js");
 
 exports.googleLogin = async (req, res) => {
   const code = req.query.code;
@@ -132,3 +133,37 @@ exports.getAllUsers = async (req, res) => {
     });
   }
 };
+
+
+
+exports.generateToken = async (req, res) => {
+  try {
+    const appId = parseInt(process.env.ZEGO_APP_ID);
+    const serverSecret = process.env.ZEGO_SERVER_ID;
+    const userId = req.params.userId;
+
+    console.log("appId", appId, "serverSecret", serverSecret, "userId", userId);
+
+    const effectiveTime = 3600
+    const payload = ""
+
+    if(appId && serverSecret && userId) {
+      const token = generateToken04(appId, userId, serverSecret, effectiveTime, payload);
+      return res.status(200).json({
+        success: true,
+        token: token
+      })
+    }
+
+    return res.status(400).json({
+      success: false,
+      error: "All fields are required",
+    });
+  }
+  catch(error) {
+    return res.status(500).json({
+      success: false,
+      error: error,
+    });
+}
+}

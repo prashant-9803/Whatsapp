@@ -19,8 +19,8 @@ const VideoCall = () => {
           name: user.name,
           profilePicture: user.profilePicture,
         },
-        callType: videoCall.type,
-        room: videoCall.roomId,
+        callType: videoCall.callType,
+        roomId: videoCall.roomId,
       });
     }
   }, [videoCall]);

@@ -18,8 +18,8 @@ const VoiceCall = () => {
           name: user.name,
           profilePicture: user.profilePicture,
         },
-        callType: voiceCall.type,
-        room: voiceCall.roomId,
+        callType: voiceCall.callType,
+        roomId: voiceCall.roomId,
       });
     }
   }, [voiceCall]);
