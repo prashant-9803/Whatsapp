@@ -1,46 +1,84 @@
 import "./App.css";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/login";
 import Onboarding from "./pages/Onboarding";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { useState } from "react";
-import Chat from "./components/Chat/Chat";
+import { useSelector } from "react-redux";
 import Home from "./pages/Home";
 import Logout from "./pages/Logout";
+import { useEffect, useState } from "react";
 
 function App() {
+  const { user } = useSelector((state) => state.auth);
+  const [isAuthenticated, setIsAuthenticated] = useState(!!user);
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  useEffect(() => {
+    // Sync auth state with Redux and localStorage
+    const storedUser = localStorage.getItem('user');
+    setIsAuthenticated(!!user || !!storedUser);
+  }, [user]); // Add user as dependency
 
-  const GoogleAuthWrapper = () => {
-    return (
-      <GoogleOAuthProvider clientId="684826987684-dv7j8vjf1gu93047vnik5d4jn2mdh0d5.apps.googleusercontent.com">
-        <Login />
-      </GoogleOAuthProvider>
-    );
-  };
-
-  const PrivateRoute = ({ children }) => {
-    if (isAuthenticated) {
-      return children;
-    } else {
-      return <Login />;
-    }
-  };
+  const GoogleAuthWrapper = () => (
+    <GoogleOAuthProvider clientId="684826987684-dv7j8vjf1gu93047vnik5d4jn2mdh0d5.apps.googleusercontent.com">
+      <Login />
+    </GoogleOAuthProvider>
+  );
 
   return (
     <div className="w-screen min-h-screen">
       <div id="photo-picker-element"></div>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<GoogleAuthWrapper />} />
-        <Route path="/onboarding" element={<Onboarding />} />
-        <Route path="/chat" element={<Chat/>}/>
-        <Route path="/logout" element={<Logout />} />
+        <Route
+          path="/"
+          element={
+            <PrivateRoute isAuthenticated={isAuthenticated}>
+              <Home />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute isAuthenticated={isAuthenticated}>
+              <GoogleAuthWrapper />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/onboarding"
+          element={
+            <PrivateRoute isAuthenticated={isAuthenticated}>
+              <Onboarding />
+            </PrivateRoute>
+          }
+        />
+        
+        <Route
+          path="/logout"
+          element={
+            <PrivateRoute isAuthenticated={isAuthenticated}>
+              <Logout />
+            </PrivateRoute>
+          }
+        />
+        <Route path="*" element={<Navigate to={isAuthenticated ? "/" : "/login"} />} />
       </Routes>
-
     </div>
   );
 }
+
+const PrivateRoute = ({ isAuthenticated, children }) => {
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+};
+
+const PublicRoute = ({ isAuthenticated, children }) => {
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+  return children;
+};
 
 export default App;

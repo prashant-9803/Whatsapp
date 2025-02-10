@@ -1,10 +1,10 @@
-import React, { useState} from "react";
+import React, { useEffect, useState} from "react";
 import { FcGoogle } from "react-icons/fc";
 import { useGoogleLogin } from "@react-oauth/google";
 import { googleAuth } from "../services/authAPI";
 import { useNavigate } from "react-router-dom";
 import { setUser } from "../slices/authSlice";
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 
 
 const Login = () => {
@@ -12,6 +12,8 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  
+  
 
   const responseGoogle = async (authResult) => {
     try {
