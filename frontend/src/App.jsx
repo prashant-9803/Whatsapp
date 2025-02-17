@@ -1,6 +1,6 @@
 import "./App.css";
 import { Routes, Route, Navigate } from "react-router-dom";
-import Login from "./pages/login";
+import Login from "./pages/Login";
 import Onboarding from "./pages/Onboarding";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useSelector } from "react-redux";
